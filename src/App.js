@@ -4,21 +4,36 @@ import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div class="App">
+      {/* ================================================================================
+          NAVBAR */}
+      <div class="navbar">
+        <div class="mdl-layout mdl-js-layout">
+          <header class="mdl-layout__header">
+            <div class="mdl-layout__header-row">
+              {/* Add an image here */}
+              <span class="mdl-layout-title">AnonChat</span>
+              <div class="mdl-layout-spacer"></div>
+            </div>
+          </header>
+        </div>
+      </div>
+
+
+      {/* ================================================================================
+          MAIN CONTENT */}
+      <main>
+        <form>
+          <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+            <input class="mdl-textfield__input" type="text" id="hash" />
+            <label class="mdl-textfield__label" for="hash">Chat room hash</label>
+          </div>
+          &nbsp;&nbsp;&nbsp;&nbsp;
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
+            Join
+          </button>
+        </form>
+      </main>
     </div>
   );
 }
