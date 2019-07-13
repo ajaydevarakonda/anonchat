@@ -1,23 +1,41 @@
 import React from 'react';
+import openSocket from 'socket.io-client';
 
 class Join extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
-
-        // This binding is necessary to make `this` work in the callback
+        this.state.socket = openSocket('http://localhost:3300');
         this.joinChat = this.joinChat.bind(this);
+        this.showMessage = this.showMessage.bind(this);
+    }
+
+    showMessage(message, timeout=4000) {
+        var snackBar = document.querySelector('#toast');
+        var data = { message, timeout };
+        snackBar.MaterialSnackbar.showSnackbar(data);
     }
 
     joinChat(e) {
         e.preventDefault();
         const hashInput = document.querySelector("#hash");
         const hash = hashInput.value;
+        const isValidHash = hash.length && (/^[A-Za-z0-9]{64,}$/.test(hash));
 
-        // do something with the hash
-        // when done redirect to chat
-        // this.history.pushState(null, 'chat');
-        window.location.href = "/chat";
+        if (! isValidHash) {
+            // check if the hash is valid
+            this.showMessage("Error: Invalid hash!")
+            return false;
+        } else {
+            this.showMessage("Loading chat ...");
+            this.state.socket.emit('join', hash);
+            this.state.socket.on('join-fail', function() {
+                this.showMessage("Error: Invalid hash!");
+            });
+            this.state.socket.on('join-ack', function(msg){
+                window.location.href = "/chat";                
+            });
+        }
     }
 
     render() {
@@ -52,6 +70,11 @@ class Join extends React.Component {
                         </button>
                     </form>
                 </main>
+
+                <div id="toast" className="mdl-js-snackbar mdl-snackbar">
+                    <div className="mdl-snackbar__text"></div>
+                    <button className="mdl-snackbar__action" type="button"></button>
+                </div>
             </div>
         );
     }
