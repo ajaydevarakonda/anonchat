@@ -7,17 +7,15 @@ class Chat extends React.Component {
         this.state = {};
 
         // This binding is necessary to make `this` work in the callback
-        this.joinChat = this.joinChat.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
     }
 
-    joinChat(e) {
+    sendMessage(e) {
         e.preventDefault();
-        const hashInput = document.querySelector("#hash");
-        const hash = hashInput.value;
+        const message = document.querySelector("#message").value;
 
-        // do something with the hash
-        // when done redirect to chat
-
+        // send the message to the user.
+        
     }
 
     render() {
@@ -38,17 +36,33 @@ class Chat extends React.Component {
                 </div>
 
 
-                {/* ================================================================================
-          MAIN CONTENT */}
-                <main>
-                    <form onSubmit={this.joinChat}>
-                        <div class="mdl-textfield mdl-js-textfield">
-                            <input class="mdl-textfield__input" type="text" id="demo-input" />
-                            <label class="mdl-textfield__label" for="demo-input">Message</label>
+                {/* ======================================================================
+                    MAIN CONTENT */}
+                <main id="chat-container" className="dl-layout__content">
+                    {/* ==================================================================
+                        CHATBOX */}
+                    <div class="mdl-grid">
+                        <div class="mdl-cell mdl-cell--10-col graybox" id="chatbox">
+                            
+                        </div>
+                        <div class="mdl-cell mdl-cell--2-col graybox" id="userlist">
+                        </div>
+                    </div>
+
+
+                    {/* ==================================================================
+                        USERS */}
+
+                    {/* ==================================================================
+                        SEND MESSAGE */}
+                    <form onSubmit={this.sendMessage}>
+                        <div className="mdl-textfield mdl-js-textfield">
+                            <input className="mdl-textfield__input" type="text" id="message" />
+                            <label className="mdl-textfield__label" htmlFor="message">Message</label>
                         </div>
                         &nbsp;&nbsp;&nbsp;&nbsp;
                         <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                          Chat
+                            <i class="fa fa-paper-plane" aria-hidden="true"></i>
                         </button>
                     </form>
                 </main>

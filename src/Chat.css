@@ -1,0 +1,19 @@
+body {
+  background-color: #ccc;
+}
+
+main#chat-container {
+  padding-top: 60px;
+}
+
+#chatbox {
+    background-color: #fff;
+    height: 65vh;
+    overflow-y: scroll;
+}
+
+#userlist {
+    background-color: #fff;
+    height: 65vh;
+    overflow-y: scroll;
+}
