@@ -5,7 +5,7 @@ class Join extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
-        this.state.socket = openSocket('http://localhost:3300');
+        this.state.socket = props.socket;
         this.joinChat = this.joinChat.bind(this);
         this.showMessage = this.showMessage.bind(this);
     }
