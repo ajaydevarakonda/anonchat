@@ -31,3 +31,13 @@
     transform: rotate(360deg);
   }
 }
+
+main#join-chat {
+  margin: 0px auto;
+  padding-top: 35vh;
+}
+
+.mdl-textfield__input#hash {
+  border-bottom: 1.2px solid rgba(63,81,181,0.8);
+  font-size: 23px;
+}
