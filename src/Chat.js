@@ -1,21 +1,42 @@
 import React from 'react';
 import './Chat.css';
+import ChatMessage from './ChatMessage';
 
 class Chat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {};
+        this.state.message = "";
+        this.state.messages = [];
+        this.state.socket = props.socket;
 
         // This binding is necessary to make `this` work in the callback
         this.sendMessage = this.sendMessage.bind(this);
+        this.messageInputChange = this.messageInputChange.bind(this);
+        this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
+    }
+
+    componentDidMount() {
+        this.state.socket.on('message', this.pushMessageIntoList);
     }
 
     sendMessage(e) {
         e.preventDefault();
         const message = document.querySelector("#message").value;
+        if (!message || !message.length) return false;
+        // send the message to the server.
+        this.state.socket.emit("user-message", message);
+    }
 
-        // send the message to the user.
+    messageInputChange(e) {
+        this.setState({ message: e.target.value });
+    }
 
+    pushMessageIntoList(msg) {
+        var msg_parsed = JSON.parse(msg);
+        if (!msg_parsed.timestamp) msg_parsed.timestamp = new Date().toString();
+        const messages = this.state.messages || [];
+        this.setState({ messages: messages.concat(msg_parsed) })
     }
 
     render() {
@@ -42,50 +63,11 @@ class Chat extends React.Component {
                     <div id="chat">
 
                         {/* ==================================================================
-                            CHAT MESSAGE */}
-                        <div className="mdl-grid mdl-grid--no-spacing chat-message">
-                            <header className="mdl-cell mdl-cell--1-col-desktop">                                
-                                <div class="chat-pic">
-                                    
-                                </div>
-                            </header>
-                            <div className="mdl-card mdl-cell mdl-cell--9-col-desktop">
-                                <div className="mdl-card__supporting-text">
-                                    <div>
-                                        <span className="username">Kim</span>
-                                        &nbsp;&nbsp;
-                                        <span className="timestamp">{(new Date(new Date()-10000)).toLocaleString()}</span>
-                                    </div>
-                                    <span className="user-message">Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua
-                                    nisi cupidatat eu. Nostrud in laboris labore nisi amet
-                                    do dolor eu fugiat consectetur elit cillum esse.</span>
-                                    
-                                </div>
-                            </div>                            
-                        </div>
-
-                        {/* ==================================================================
-                            CHAT MESSAGE */}
-                        <div className="mdl-grid mdl-grid--no-spacing chat-message">
-                            <header className="mdl-cell mdl-cell--1-col-desktop">                                
-                                <div class="chat-pic">
-                                    
-                                </div>
-                            </header>
-                            <div className="mdl-card mdl-cell mdl-cell--9-col-desktop">
-                                <div className="mdl-card__supporting-text">
-                                    <div>
-                                        <span className="username">Arpan</span>
-                                        &nbsp;&nbsp;
-                                        <span className="timestamp">{(new Date()).toLocaleString()}</span>
-                                    </div>
-                                    <span className="user-message">Dolore ex deserunt aute fugiat aute nulla ea sunt aliqua
-                                    nisi cupidatat eu. Nostrud in laboris labore nisi amet
-                                    do dolor eu fugiat consectetur elit cillum esse.</span>
-                                    
-                                </div>
-                            </div>                            
-                        </div>
+                            CHAT MESSAGES */}
+                        {
+                            this.state.messages.map((message) => 
+                            <ChatMessage sender={message.sender} message={message.message} timestamp={message.timestamp}></ChatMessage> )
+                        }
 
                     </div>
                     {/* ==================================================================
@@ -94,13 +76,16 @@ class Chat extends React.Component {
                       <span id="username">hello-freak-bitches</span>
                       &nbsp;&nbsp;&nbsp;&nbsp;
                       <div className="mdl-textfield mdl-js-textfield message-textfield">
-                        <input className="mdl-textfield__input" type="text" id="message" autoComplete="off" />
+                        <input className="mdl-textfield__input" type="text" id="message" 
+                            onChange={this.messageInputChange} value={this.state.message}
+                            autoComplete="off" />
                         <label className="mdl-textfield__label" htmlFor="message">Message</label>
                       </div>
                       &nbsp;&nbsp;&nbsp;&nbsp;
                       <button
                         className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
                         id="send-button"
+                        disabled={!this.state.message && !this.state.message.length}
                       >
                         <i
                           className="fa fa-paper-plane"
