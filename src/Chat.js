@@ -8,7 +8,6 @@ class Chat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            message: "",
             messages: [],
             socket: openSocket("http://localhost:3300"),
             username: null,
@@ -18,16 +17,17 @@ class Chat extends React.Component {
         };
 
         this.showAlert = this.showAlert.bind(this);
-        this.messageInputChange = this.messageInputChange.bind(this);
-
+    
         this.joinChat = this.joinChat.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
+        this.updateUsersList = this.updateUsersList.bind(this);
     }
 
     componentDidMount() {
         // we will not recieve any messages unless we join a room.
         this.state.socket.on('message', this.pushMessageIntoList);
+        this.state.socket.on('user-list-update', this.updateUsersList);
     }
 
     componentDidUpdate() {
@@ -37,16 +37,15 @@ class Chat extends React.Component {
 
     sendMessage(e) {
         e.preventDefault();
-        const message = document.querySelector("#message").value;
+        const messageDiv = document.querySelector("#message")
+        const message = messageDiv.value;
         if (!message || !message.length) return false;
         this.state.socket.emit("user-message", JSON.stringify({
             message,
             room: this.state.room, 
         }));
-    }
-
-    messageInputChange(e) {
-        this.setState({ message: e.target.value });
+        messageDiv.value = "";
+        messageDiv.blur();
     }
 
     pushMessageIntoList(msg) {
@@ -54,6 +53,14 @@ class Chat extends React.Component {
         if (!msg_parsed.timestamp) msg_parsed.timestamp = new Date().toString();
         const messages = this.state.messages || [];
         this.setState({ messages: messages.concat(msg_parsed) })
+    }
+
+    updateUsersList(userlist) {
+        console.log("recieved list update")
+        console.log(arguments)
+        var newUserList = JSON.parse(userlist);
+        newUserList = newUserList.users || [];
+        this.setState({ currentRoomUsers: newUserList })
     }
 
     showAlert(message, timeout = 4000) {
@@ -129,28 +136,14 @@ class Chat extends React.Component {
                             <span id="username">{this.state.username}</span>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <div className="mdl-textfield mdl-js-textfield message-textfield">
-                                <input
-                                    className="mdl-textfield__input"
-                                    type="text"
-                                    id="message"
-                                    onChange={this.messageInputChange}
-                                    value={this.state.message}
-                                    autoComplete="off"
-                                />
-                                <label
-                                    className="mdl-textfield__label"
-                                    htmlFor="message"
-                                >
-                                    Message
-                            </label>
+                                <input className="mdl-textfield__input" type="text" id="message" autoComplete="off" />
+                                <label className="mdl-textfield__label" htmlFor="message">Message</label>
                             </div>
                             &nbsp;&nbsp;&nbsp;&nbsp;
                             <button
                                 className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
                                 id="send-button"
-                                disabled={
-                                    !this.state.message && !this.state.message.length
-                                }
+                                disabled={false}
                             >
                                 <i className="fa fa-paper-plane" aria-hidden="true" />
                             </button>
