@@ -1,3 +1,24 @@
+/* Join page */
+#join-chat {
+  margin: 0px auto;
+  padding-top: 35vh;
+}
+
+.mdl-textfield__input#hash {
+  border-bottom: 1.2px solid rgba(63,81,181,0.8);
+  font-size: 23px;
+}
+
+.joinform {
+    text-align: center;
+}
+
+.joinform form {
+    margin-top: 25vh;
+}
+
+
+/* Chat page */
 main#chat-container {
   padding-top: 60px;
 }
