@@ -1,8 +1,10 @@
 import React from 'react';
 import openSocket from 'socket.io-client';
+import { Beforeunload } from 'react-beforeunload';
 
 import './Chat.css';
 import ChatMessage from './ChatMessage';
+
 
 function randomHash(length) {
     var result = '';
@@ -28,10 +30,12 @@ class Chat extends React.Component {
         };
 
         this.showAlert = this.showAlert.bind(this);
+        this.showInviteModal = this.showInviteModal.bind(this);
 
         this.joinChat = this.joinChat.bind(this);
         this._joinChat = this._joinChat.bind(this);
         this.joinRandomChat = this.joinRandomChat.bind(this);
+        this.copyRoomName = this.copyRoomName.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
         this.updateUsersList = this.updateUsersList.bind(this);
@@ -57,7 +61,7 @@ class Chat extends React.Component {
             message,
             room: this.state.room, 
         }));
-        messageDiv.value = "";
+        messageDiv.MaterialTextfield.change("");
         messageDiv.blur();
     }
 
@@ -82,6 +86,20 @@ class Chat extends React.Component {
         snackBar.MaterialSnackbar.showSnackbar(data);
     }
 
+    showInviteModal() {
+        var dialog = document.querySelector('dialog');
+        dialog.showModal();
+        dialog.querySelector('.close').addEventListener('click', function () {
+            dialog.close();
+        }, { once: true }); // prevents adding too many eventlisteners
+    }
+
+    copyRoomName() {
+        document.querySelector("#share-room-hash").select();
+        document.execCommand("copy", true, this.state.room);
+        this.showAlert("Copied!", 1000);
+    }
+
     joinRandomChat(e) {
         // create a random hash.
         const hash = randomHash(64);
@@ -94,13 +112,13 @@ class Chat extends React.Component {
 
         if (!isValidHash) {
             // check if the hash is valid
-            this.showAlert("Error: Invalid hash!")
+            this.showAlert("Error: Invalid hash!", 1000)
             return false;
         } else {
-            this.showAlert("Loading chat ...");
+            this.showAlert("Loading chat ...", 500);
             this.state.socket.emit('join', hash);
             this.state.socket.on('join-fail', function () {
-                self.showAlert("Error: Invalid hash!");
+                self.showAlert("Error: Invalid hash!", 1000);
             });
             this.state.socket.on('join-ack', function (msg) {
                 const { room, username, users, numberOfUsers } = JSON.parse(msg);
@@ -135,9 +153,21 @@ class Chat extends React.Component {
 
                     {/* ==================================================================
                         CHATBOX */}
+                    <Beforeunload onBeforeunload={event => event.preventDefault()} />
                     <div className="mdl-cell mdl-cell--8-col chatbox">
                         <div id="chatbox-literal">
-                            <h6>#{this.state.room.slice(0, 12)}...</h6>
+                            <h6>
+                                #{this.state.room.slice(0, 12)}...
+                                &nbsp;&nbsp;
+                                <button
+                                    className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
+                                    disabled={false}
+                                    id="invite-button"
+                                    onClick={this.showInviteModal}
+                                >
+                                    Invite
+                                </button>
+                            </h6>
                         </div>
 
                         {/* ==============================================================
@@ -194,6 +224,26 @@ class Chat extends React.Component {
             </main>
             {/* ==========================================================================
                 /MAIN CONTENT */}
+
+            {/* ==========================================================================
+                MODAL */}
+              <dialog class="mdl-dialog" id="join-dialog">
+                <div class="mdl-dialog__content">
+                    <p>Send the new user below code and ask to put this code at the homepage.</p>
+
+                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                        <input className="mdl-textfield__input" type="text" id="share-room-hash" value={this.state.room} />
+                        <label className="mdl-textfield__label" htmlFor="hash">Chat room hash</label>
+                    </div>
+                    &nbsp;&nbsp;&nbsp;&nbsp;
+                    <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick={this.copyRoomName}>
+                        <i className="fa fa-copy" aria-hidden="true" />                        
+                    </button>
+                </div>
+                <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
+                    <button type="button" class="mdl-button close">Close</button>
+                </div>
+            </dialog>
         </div>);
     }
 

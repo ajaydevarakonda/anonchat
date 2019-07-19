@@ -132,3 +132,16 @@ h5 {
 #new-room-literal {
     font-size: 18px;
 }
+
+#invite-button {
+    height: 24px;
+    min-height: 1%;
+    line-height: 1px;
+    padding: 0;
+    margin: 0;
+    vertical-align: center;
+}
+
+#join-dialog {
+    min-width: 430px;
+}
