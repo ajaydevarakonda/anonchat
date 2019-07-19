@@ -4,6 +4,17 @@ import openSocket from 'socket.io-client';
 import './Chat.css';
 import ChatMessage from './ChatMessage';
 
+function randomHash(length) {
+    var result = '';
+    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    var charactersLength = characters.length;
+    for (var i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
+}
+ 
+
 class Chat extends React.Component {
     constructor(props) {
         super(props);
@@ -17,8 +28,10 @@ class Chat extends React.Component {
         };
 
         this.showAlert = this.showAlert.bind(this);
-    
+
         this.joinChat = this.joinChat.bind(this);
+        this._joinChat = this._joinChat.bind(this);
+        this.joinRandomChat = this.joinRandomChat.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
         this.updateUsersList = this.updateUsersList.bind(this);
@@ -69,11 +82,14 @@ class Chat extends React.Component {
         snackBar.MaterialSnackbar.showSnackbar(data);
     }
 
-    joinChat(e) {
+    joinRandomChat(e) {
+        // create a random hash.
+        const hash = randomHash(64);
+        this._joinChat(hash);
+    }
+
+    _joinChat(hash) {
         const self = this;
-        e.preventDefault();
-        const hashInput = document.querySelector("#hash");
-        const hash = hashInput.value;
         const isValidHash = hash.length && (/^[A-Za-z0-9]{64,}$/.test(hash));
 
         if (!isValidHash) {
@@ -93,6 +109,13 @@ class Chat extends React.Component {
                 })
             });
         }
+    }
+
+    joinChat(e) {
+        e.preventDefault();
+        const hashInput = document.querySelector("#hash");
+        const hash = hashInput.value;
+        this._joinChat(hash);
     }
 
     renderChatPage() {
@@ -202,6 +225,16 @@ class Chat extends React.Component {
                                             Join
                                 </button>
                             </form>
+
+                            <h4>or</h4>
+                            <br/>
+
+                            <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                                onClick={this.joinRandomChat}>
+                                Create
+                            </button>
+                            &nbsp;&nbsp;
+                            <span id="new-room-literal">new room</span>
                         </div>
                         {/* ==================================================================
                             /JOIN */}
