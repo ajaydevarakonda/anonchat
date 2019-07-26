@@ -1,50 +1,42 @@
 import React from 'react';
-import openSocket from 'socket.io-client';
 import { Beforeunload } from 'react-beforeunload';
 
-import './Chat.css';
 import ChatMessage from './ChatMessage';
+import ChatContext from './ChatContext';
 
-
-function randomHash(length) {
-    var result = '';
-    var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-    var charactersLength = characters.length;
-    for (var i = 0; i < length; i++) {
-        result += characters.charAt(Math.floor(Math.random() * charactersLength));
-    }
-    return result;
-}
- 
 
 class Chat extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
             messages: [],
-            socket: openSocket("http://localhost:3300"),
-            username: null,
-            room: null,
-            currentRoomUsers: null,
-            numberOfUsersInCurrentRoom: null,
         };
 
-        this.showAlert = this.showAlert.bind(this);
+        this.showAlert = props.showAlert.bind(this);
+        this.setContextState = props.setContextState.bind(this);
+
+        this.showAlert = props.showAlert.bind(this);
         this.showInviteModal = this.showInviteModal.bind(this);
 
-        this.joinChat = this.joinChat.bind(this);
-        this._joinChat = this._joinChat.bind(this);
-        this.joinRandomChat = this.joinRandomChat.bind(this);
         this.copyRoomName = this.copyRoomName.bind(this);
         this.sendMessage = this.sendMessage.bind(this);
         this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
         this.updateUsersList = this.updateUsersList.bind(this);
     }
 
+    componentWillMount() {
+        if (! this.context || ! this.context.room || ! this.context.username)
+            window.location = "/";
+    }
+
     componentDidMount() {
         // we will not recieve any messages unless we join a room.
-        this.state.socket.on('message', this.pushMessageIntoList);
-        this.state.socket.on('user-list-update', this.updateUsersList);
+        this.context.socket.on('message', this.pushMessageIntoList);
+        this.context.socket.on('user-list-update', this.updateUsersList);
+
+        // const roomShareField = document.querySelector("#share-room-hash");
+        //TODO: fix issue with mdl method
+        // roomShareField.MaterialTextfield.change(this.context.room);
     }
 
     componentDidUpdate() {
@@ -57,9 +49,9 @@ class Chat extends React.Component {
         const messageDiv = document.querySelector("#message")
         const message = messageDiv.value;
         if (!message || !message.length) return false;
-        this.state.socket.emit("user-message", JSON.stringify({
+        this.context.socket.emit("user-message", JSON.stringify({
             message,
-            room: this.state.room, 
+            room: this.context.room, 
         }));
         messageDiv.MaterialTextfield.change("");
         messageDiv.blur();
@@ -73,17 +65,9 @@ class Chat extends React.Component {
     }
 
     updateUsersList(userlist) {
-        console.log("recieved list update")
-        console.log(arguments)
         var newUserList = JSON.parse(userlist);
         newUserList = newUserList.users || [];
         this.setState({ currentRoomUsers: newUserList })
-    }
-
-    showAlert(message, timeout = 4000) {
-        var snackBar = document.querySelector('#toast');
-        var data = { message, timeout };
-        snackBar.MaterialSnackbar.showSnackbar(data);
     }
 
     showInviteModal() {
@@ -96,212 +80,120 @@ class Chat extends React.Component {
 
     copyRoomName() {
         document.querySelector("#share-room-hash").select();
-        document.execCommand("copy", true, this.state.room);
+        document.execCommand("copy", true, this.context.room);
         this.showAlert("Copied!", 1000);
     }
 
-    joinRandomChat(e) {
-        // create a random hash.
-        const hash = randomHash(64);
-        this._joinChat(hash);
-    }
-
-    _joinChat(hash) {
-        const self = this;
-        const isValidHash = hash.length && (/^[A-Za-z0-9]{64,}$/.test(hash));
-
-        if (!isValidHash) {
-            // check if the hash is valid
-            this.showAlert("Error: Invalid hash!", 1000)
-            return false;
-        } else {
-            this.showAlert("Loading chat ...", 500);
-            this.state.socket.emit('join', hash);
-            this.state.socket.on('join-fail', function () {
-                self.showAlert("Error: Invalid hash!", 1000);
-            });
-            this.state.socket.on('join-ack', function (msg) {
-                const { room, username, users, numberOfUsers } = JSON.parse(msg);
-                self.setState({
-                    room, username, currentRoomUsers:users, numberOfUsersInCurrentRoom: numberOfUsers,
-                })
-            });
-        }
-    }
-
-    joinChat(e) {
-        e.preventDefault();
-        const hashInput = document.querySelector("#hash");
-        const hash = hashInput.value;
-        this._joinChat(hash);
-    }
-
-    renderChatPage() {
-        console.log(this.state.messages)
-        return (<div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-            {/* ======================================================================
-                MAIN CONTENT */}
-            <main className="mdl-layout__content">
-                <div className="mdl-grid mdl-grid--no-spacing">
-                    {/* ==================================================================
-                            SIDENAV  */}
-                    <div className="mdl-cell mdl-cell--2-col sidenav vh100 text-center">
-                        <h5>ANONCHAT</h5>
-                    </div>
-                    {/* ==================================================================
-                        /SIDENAV  */}
-
-                    {/* ==================================================================
-                        CHATBOX */}
-                    <Beforeunload onBeforeunload={event => event.preventDefault()} />
-                    <div className="mdl-cell mdl-cell--8-col chatbox">
-                        <div id="chatbox-literal">
-                            <h6>
-                                #{this.state.room.slice(0, 12)}...
-                                &nbsp;&nbsp;
-                                <button
-                                    className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
-                                    disabled={false}
-                                    id="invite-button"
-                                    onClick={this.showInviteModal}
-                                >
-                                    Invite
-                                </button>
-                            </h6>
-                        </div>
-
-                        {/* ==============================================================
-                            CHAT MESSAGES */}
-                        <div id="chat">
-                            {this.state.messages.map((message, indx) => (
-                                <ChatMessage
-                                    sender={message.username}
-                                    key={indx}
-                                    message={message.message}
-                                    timestamp={message.timestamp}
-                                />
-                            ))}
-                        </div>
-
-                        {/* ==============================================================
-                            SEND MESSAGE */}
-                        <form id="message-form" onSubmit={this.sendMessage}>
-                            <span id="username">{this.state.username}</span>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <div className="mdl-textfield mdl-js-textfield message-textfield">
-                                <input className="mdl-textfield__input" type="text" id="message" autoComplete="off" />
-                                <label className="mdl-textfield__label" htmlFor="message">Message</label>
-                            </div>
-                            &nbsp;&nbsp;&nbsp;&nbsp;
-                            <button
-                                className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
-                                id="send-button"
-                                disabled={false}
-                            >
-                                <i className="fa fa-paper-plane" aria-hidden="true" />
-                            </button>
-                        </form>
-                    </div>
-                    {/* ==================================================================
-                        /CHATBOX */}
-
-
-                    {/* ==================================================================
-                        USERS */}
-                    <div className="mdl-cell mdl-cell--2-col userlist">
-                        <div id="users-literal">
-                            <h6>Users - {this.state.numberOfUsersInCurrentRoom}</h6>
-                        </div>
-                        <div id="users">
-                            {this.state.currentRoomUsers.map((user, indx) => (
-                                <div className="user" key={indx}>{user}</div>
-                            ))}
-                        </div>
-                    </div>
-                    {/* ==================================================================
-                        /USERS */}
-                </div>
-            </main>
-            {/* ==========================================================================
-                /MAIN CONTENT */}
-
-            {/* ==========================================================================
-                MODAL */}
-              <dialog class="mdl-dialog" id="join-dialog">
-                <div class="mdl-dialog__content">
-                    <p>Send the new user below code and ask to put this code at the homepage.</p>
-
-                    <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                        <input className="mdl-textfield__input" type="text" id="share-room-hash" value={this.state.room} />
-                        <label className="mdl-textfield__label" htmlFor="hash">Chat room hash</label>
-                    </div>
-                    &nbsp;&nbsp;&nbsp;&nbsp;
-                    <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick={this.copyRoomName}>
-                        <i className="fa fa-copy" aria-hidden="true" />                        
-                    </button>
-                </div>
-                <div class="mdl-dialog__actions mdl-dialog__actions--full-width">
-                    <button type="button" class="mdl-button close">Close</button>
-                </div>
-            </dialog>
-        </div>);
-    }
-
-    renderJoinPage() {
-        return (
-            <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
-                {/* ======================================================================
-                MAIN CONTENT */}
-                <main className="mdl-layout__content">
-                    <div className="mdl-grid mdl-grid--no-spacing">
-                        {/* ==================================================================
-                            SIDENAV  */}
-                        <div className="mdl-cell mdl-cell--2-col sidenav vh100 text-center">
-                            <h5>ANONCHAT</h5>
-                        </div>
-                        {/* ==================================================================
-                            /SIDENAV  */}
-
-                        {/* ==================================================================
-                            JOIN */}
-                        <div className="mdl-cell mdl-cell--10-col joinform">
-                            <form onSubmit={this.joinChat}>
-                                <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
-                                    <input className="mdl-textfield__input" type="text" id="hash" />
-                                    <label className="mdl-textfield__label" htmlFor="hash">Chat room hash</label>
-                                </div>
-                                &nbsp;&nbsp;&nbsp;&nbsp;
-                                <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored">
-                                            Join
-                                </button>
-                            </form>
-
-                            <h4>or</h4>
-                            <br/>
-
-                            <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
-                                onClick={this.joinRandomChat}>
-                                Create
-                            </button>
-                            &nbsp;&nbsp;
-                            <span id="new-room-literal">new room</span>
-                        </div>
-                        {/* ==================================================================
-                            /JOIN */}
-                    </div>
-                </main>
-                {/* ==========================================================================
-                /MAIN CONTENT */}
-            </div>
-        );
-    }
-
     render() {
-        console.log("rendered")
-        return this.state.username && this.state.room
-            ? this.renderChatPage()
-            : this.renderJoinPage();
+        return (<div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        {/* ======================================================================
+            MAIN CONTENT */}
+        <main className="mdl-layout__content">
+            <div className="mdl-grid mdl-grid--no-spacing">
+                {/* ==================================================================
+                        SIDENAV  */}
+                <div className="mdl-cell mdl-cell--2-col sidenav vh100 text-center">
+                    <h5>ANONCHAT</h5>
+                </div>
+                {/* ==================================================================
+                    /SIDENAV  */}
+
+                {/* ==================================================================
+                    CHATBOX */}
+                <Beforeunload onBeforeunload={event => event.preventDefault()} />
+                <div className="mdl-cell mdl-cell--8-col chatbox">
+                    <div id="chatbox-literal">
+                        <h6>
+                            #{this.context.room.slice(0, 12)}...
+                            &nbsp;&nbsp;
+                            <button
+                                className="mdl-button mdl-js-button mdl-button--raised mdl-button--accent"
+                                disabled={false}
+                                id="invite-button"
+                                onClick={this.showInviteModal}
+                            >
+                                Invite
+                            </button>
+                        </h6>
+                    </div>
+
+                    {/* ==============================================================
+                        CHAT MESSAGES */}
+                    <div id="chat">
+                        {this.state.messages.map((message, indx) => (
+                            <ChatMessage
+                                sender={message.username}
+                                key={indx}
+                                message={message.message}
+                                timestamp={message.timestamp}
+                            />
+                        ))}
+                    </div>
+
+                    {/* ==============================================================
+                        SEND MESSAGE */}
+                    <form id="message-form" onSubmit={this.sendMessage}>
+                        <span id="username">{this.context.username}</span>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <div className="mdl-textfield mdl-js-textfield message-textfield">
+                            <input className="mdl-textfield__input" type="text" id="message" autoComplete="off" />
+                            <label className="mdl-textfield__label" htmlFor="message">Message</label>
+                        </div>
+                        &nbsp;&nbsp;&nbsp;&nbsp;
+                        <button
+                            className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored"
+                            id="send-button"
+                            disabled={false}
+                        >
+                            <i className="fa fa-paper-plane" aria-hidden="true" />
+                        </button>
+                    </form>
+                </div>
+                {/* ==================================================================
+                    /CHATBOX */}
+
+
+                {/* ==================================================================
+                    USERS */}
+                <div className="mdl-cell mdl-cell--2-col userlist">
+                    <div id="users-literal">
+                        <h6>Users - {this.context.numberOfUsersInCurrentRoom}</h6>
+                    </div>
+                    <div id="users">
+                        {this.context.currentRoomUsers.map((user, indx) => (
+                            <div className="user" key={indx}>{user}</div>
+                        ))}
+                    </div>
+                </div>
+                {/* ==================================================================
+                    /USERS */}
+            </div>
+        </main>
+        {/* ==========================================================================
+            /MAIN CONTENT */}
+
+        {/* ==========================================================================
+            MODAL */}
+          <dialog className="mdl-dialog" id="join-dialog">
+            <div className="mdl-dialog__content">
+                <p>Send the new user below code and ask to put this code at the homepage.</p>
+
+                <div className="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+                    <input className="mdl-textfield__input" type="text" id="share-room-hash"/>
+                    <label className="mdl-textfield__label" htmlFor="hash">Chat room hash</label>
+                </div>
+                &nbsp;&nbsp;&nbsp;&nbsp;
+                <button className="mdl-button mdl-js-button mdl-button--raised mdl-button--colored" onClick={this.copyRoomName}>
+                    <i className="fa fa-copy" aria-hidden="true" />                        
+                </button>
+            </div>
+            <div className="mdl-dialog__actions mdl-dialog__actions--full-width">
+                <button type="button" className="mdl-button close">Close</button>
+            </div>
+        </dialog>
+    </div>);
     }
 }
 
+Chat.contextType = ChatContext;
 export default Chat;
