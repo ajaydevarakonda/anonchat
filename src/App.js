@@ -46,7 +46,7 @@ class App extends React.Component {
                 <Join {...routeProps} {...methodsToShare} />
             )} />
             <Route exact path="/" render={(routeProps) => (
-                <Join {...routeProps} {...methodsToShare} />
+                <Chat {...routeProps} {...methodsToShare} />
             )} />
           </Switch>
         </ChatContext.Provider>

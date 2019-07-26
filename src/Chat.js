@@ -8,6 +8,9 @@ import ChatContext from './ChatContext';
 class Chat extends React.Component {
     constructor(props) {
         super(props);
+
+        console.log("works upto here")
+
         this.state = {
             messages: [],
         };
