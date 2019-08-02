@@ -5,10 +5,6 @@ import Join from './Join';
 import Chat from './Chat';
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   render() {
     return (<Router>
       <Switch>

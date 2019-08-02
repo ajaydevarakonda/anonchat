@@ -67,6 +67,7 @@ class Join extends React.Component {
     }
 
     render() {
+        console.log(this.props);
         return (
             <div className="mdl-layout mdl-js-layout mdl-layout--fixed-header">
                 {/* ======================================================================
