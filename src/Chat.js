@@ -8,8 +8,17 @@ class Chat extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {
+            messages: [],
+        }
+
         this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
         this.updateUsersList = this.updateUsersList.bind(this);
+    }
+
+    componentWillMount() {
+        if (! this.props || ! this.props.room.length || ! this.props.username.length)
+            window.location.hash = "/";
     }
 
     componentDidMount() {
@@ -20,16 +29,15 @@ class Chat extends Component {
     updateUsersList(userlist) {
         var newUserList = JSON.parse(userlist);
         newUserList = newUserList.users || [];
-        // TODO: create proper event to add users to the list
-        // TODO: send event from here along with the list.
+        store.dispatch({ type: 'UPDATE_USER_LIST', data: newUserList });
     }
 
     pushMessageIntoList(msg) {
         var msg_parsed = JSON.parse(msg);
         if (!msg_parsed.timestamp) msg_parsed.timestamp = new Date().toString();
-        store.dispatch({
-            type: 'ADD_MSG_TO_LIST',
-            data: msg_parsed,
+        this.setState({ messages: this.state.messages.concat(msg_parsed) }, function() {
+            const messageListDiv = document.querySelector(".message-list");
+            messageListDiv.scrollTop = messageListDiv.scrollHeight;
         });
     }
 
@@ -64,8 +72,8 @@ class Chat extends Component {
               <div className="main-div">
                 <div className="message-container">
                   <div className="message-list">
-                    {this.props.messsages 
-                        ? this.props.messages.map((msg, indx) => (<Message key={indx} {...msg}></Message>))
+                    {this.state.messages 
+                        ? this.state.messages.map((msg, indx) => (<Message key={indx} {...msg}></Message>))
                         : null}
                   </div>
                 </div>

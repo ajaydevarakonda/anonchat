@@ -2,12 +2,12 @@ import { createStore } from 'redux';
 import openSocket from 'socket.io-client';
 
 const initialState = {
-    socket: openSocket("https://anonchat-backend.herokuapp.com/"),
+    // socket: openSocket("https://anonchat-backend.herokuapp.com/"),
+    socket: openSocket("http://localhost:3300"),
     username: "",
     room: "",
     currentRoomUsers: [],
     numberOfUsersInCurrentRoom: 0,
-    messages: []
 }
 
 /**
@@ -21,12 +21,11 @@ function stateManager(state = initialState, action) {
                 ...action.data,
             });
             break;
-        case 'ADD_MSG_TO_LIST':
+        case 'UPDATE_USER_LIST':
             return ({
                 ...state,
-                messages: state.concat(action.data),
-            });
-            break;
+                currentRoomUsers: action.data
+            })
         default:
             return state
     }
