@@ -1,7 +1,156 @@
 body {
-  margin: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-family: 'Open Sans', sans-serif;
+  background: #304b76;
+  height: 100vh;
+  width: 100vw;
+  margin: 0px;
+  padding: 0px;
+  overflow: hidden;
 }
 
+a.special {
+  color: #ffc200; 
+}
+
+a.special.create-chat {
+  font-size: 18px;
+}
+
+.join-input {
+  font-size: 23px;
+  border-radius: 3%;
+  border: 0;
+  padding: 5px;
+}
+
+.join-btn {
+  background: #ffc200;
+  border: 0;
+  margin-left: 10px;
+  font-size: 23px;
+  cursor: pointer;
+  padding: 5px;
+}
+
+.join-page-container {
+  padding-top: 12vh;
+  text-align: center;
+  margin: 0px auto;
+}
+
+.join-page-container h1 {
+  font-size: 65px;
+  color: #fff;
+  overflow: hidden;
+}
+
+div.left-div {
+  width: 23.5vw;
+  float: left;
+  padding-left: 1.5vw;
+  padding-top: 1.2vw;
+  color: white;
+}
+
+div.main-div {
+  width: 75vw;
+  float: right;
+  background: #fff;
+}
+
+div.main-div {
+  height: 100vh;
+}
+
+div.message-container {
+  height: 92.5vh;
+}
+
+.channel-literal {
+  padding: 0;
+  margin: 0;
+  font-size: 16px;
+  font-weight: 700;   
+}
+
+.channel-name.selected {
+  background: #ffc200;
+  padding: 4px;
+  border-radius: 1.5% 0 0 1.5%;
+  display: block;
+  margin-left: 1px;
+  color: #304b76;
+}
+
+span.person {
+  display: block;
+  line-height: 27px;
+}
+
+div.people-list {
+  overflow-x: hidden;
+  overflow-y: auto;
+  height: 30vw;
+}
+
+
+div.chat-bar {
+  padding: 5px 0px;
+  border-top: 1px solid #ccc;
+}
+
+.username {
+  width: 20vw;
+  padding: 10px;
+  float: left;
+  text-align: right;
+}
+
+.message-input {
+  width: 53vw;
+  float: right;
+}
+
+#msg {
+  font-size: 20px;
+  padding: 4px;
+  margin: 1px;
+  width: 50vw;
+}
+
+
+
+div.message {
+  padding: 3px 30px;
+  display: block;
+  clear: both;
+}
+
+div.pic {
+  width: 50px;
+  height: 50px;
+  float: left;
+}
+
+div.message-content {
+  float: left;
+  width: 60vw;
+  padding: 0px 20px;
+  font-size: 16px;
+}
+
+span.sender-username {
+  font-weight: 700;
+}
+
+p.message-body {
+  margin-top: 3px;
+}
+
+div.message-list {
+  padding-top: 15px;
+  height: 90vh;
+  overflow: auto;
+}

@@ -19,7 +19,6 @@ class App extends React.Component {
           <Chat {...routeProps}/>
         )} />
       </Switch>
-      
     </Router>)
   }
 }
