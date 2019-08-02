@@ -20,7 +20,6 @@ function stateManager(state = initialState, action) {
                 ...state,
                 ...action.data,
             });
-            break;
         case 'UPDATE_USER_LIST':
             return ({
                 ...state,

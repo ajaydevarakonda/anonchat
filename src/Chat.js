@@ -14,6 +14,8 @@ class Chat extends Component {
 
         this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
         this.updateUsersList = this.updateUsersList.bind(this);
+        this.sendMessage = this.sendMessage.bind(this);
+        this.copyRoomName = this.copyRoomName.bind(this);
     }
 
     componentWillMount() {
@@ -24,6 +26,24 @@ class Chat extends Component {
     componentDidMount() {
         this.props.socket.on('message', this.pushMessageIntoList);
         this.props.socket.on('user-list-update', this.updateUsersList);
+
+        const modal = document.getElementById("hash-share-modal");
+        const btn = document.getElementById("myBtn");
+        const span = document.getElementsByClassName("close")[0];
+
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        window.onclick = function (event) {
+            if (event.target === modal) {
+                modal.style.display = "none";
+            }
+        }
     }
 
     updateUsersList(userlist) {
@@ -41,6 +61,28 @@ class Chat extends Component {
         });
     }
 
+    sendMessage(e) {
+        e.preventDefault();
+        const messageDiv = document.querySelector("#msg")
+        const message = messageDiv.value;
+        if (!message || !message.length) return false;
+        this.props.socket.emit("user-message", JSON.stringify({
+            message,
+            room: this.props.room,
+        }));
+        messageDiv.value = "";
+    }
+
+    copyRoomName() {
+        const roomHashDiv = document.querySelector("#share-room-hash")
+        if (! roomHashDiv) return false;
+        const roomName = this.props.room;
+        if (! roomName) return false;
+        roomHashDiv.select();
+        document.execCommand("copy", true, );
+        console.log("Copied!");
+    }
+
     render() {
         return (
           <div>
@@ -56,6 +98,8 @@ class Chat extends Component {
                       : null}
                     ...
                   </span>
+                  <br/>
+                  <a id="myBtn" className="special">Invite a user</a>
                 </div>
                 <br />
                 <br />
@@ -82,15 +126,30 @@ class Chat extends Component {
                     <span>{this.props.username}</span>
                   </div>
                   <div className="message-input">
-                    <input
-                      type="text"
-                      id="msg"
-                      placeholder="Enter message and press enter..."
-                    />
+                    <form onSubmit={this.sendMessage}>
+                        <input
+                            type="text"
+                            id="msg"
+                            placeholder="Enter message and press enter..."
+                            autoComplete="off"
+                        />
+                    </form>
                   </div>
                 </div>
               </div>
             </div>
+
+            { /* ============ Modal =============*/ }
+            <div id="hash-share-modal" className="modal">
+                <div className="modal-content">
+                    <span className="close">&times;</span>
+
+                    <p>Note: Share the below hash to any user and ask them to input at home page</p>
+                    <input type="text" id="share-room-hash" defaultValue={this.props.room}/>
+                    <button id="copy-btn" onClick={this.copyRoomName}>Copy</button>
+                </div>
+            </div>
+
           </div>
         );
     }

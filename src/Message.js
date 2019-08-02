@@ -11,7 +11,8 @@ function Message(props) {
                 />
             </div>
             <div className="message-content">
-                <span className="sender-username">{props.username}</span>
+                <span className="sender-username">{props.username}</span>{" "}
+                <span className="muted">{new Date(props.timestamp).toLocaleString()}</span>
                 <p className="message-body">
                     {props.message}
                 </p>

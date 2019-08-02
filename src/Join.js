@@ -46,7 +46,6 @@ class Join extends Component {
             });
 
             this.props.socket.on('join-ack', function (msg) {
-                console.log(msg);
                 const { room, username, users, numberOfUsers } = JSON.parse(msg);
                 store.dispatch({ type: 'SET_ROOM_DETAILS', data: {
                     room, username, currentRoomUsers: users, numberOfUsersInCurrentRoom: numberOfUsers
@@ -69,7 +68,7 @@ class Join extends Component {
                         </div>
                         <br />
                         or{" "}
-                        <a href="#" onClick={this.joinRandomRoom} className="special create-chat">
+                        <a onClick={this.joinRandomRoom} className="special create-chat">
                             create chat
                         </a>
                     </div>

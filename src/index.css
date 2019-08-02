@@ -12,6 +12,9 @@ body {
 
 a.special {
   color: #ffc200; 
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 16px;
 }
 
 a.special.create-chat {
@@ -154,3 +157,69 @@ div.message-list {
   height: 90vh;
   overflow: auto;
 }
+
+.muted {
+  color: #a6a5a1;
+}
+
+/** MODAL =====================
+*/
+
+
+/* The Modal (background) */
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  padding-top: 100px; /* Location of the box */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content */
+.modal-content {
+  background-color: #fefefe;
+  margin: auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 40%;
+}
+
+/* The Close Button */
+.close {
+  color: #aaaaaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: #000;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+#share-room-hash {
+  font-size: 21px;
+}
+
+#hash-share-modal {
+  text-align: center;
+}
+
+#copy-btn {
+  background-color: #304B76; 
+  color: #fff;
+  border: 0px;
+  font-size: 18px;
+  padding: 5px 2px;
+  margin: 1px 5px;
+}
+
+/* /modal */
