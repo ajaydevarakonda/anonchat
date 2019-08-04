@@ -106,7 +106,7 @@ div.chat-bar {
 
 .username {
   width: 20vw;
-  padding: 10px;
+  padding: 10px 1vw;
   float: left;
   text-align: right;
 }
@@ -160,6 +160,10 @@ div.message-list {
 
 .muted {
   color: #a6a5a1;
+}
+
+.italic {
+  font-style: italic;
 }
 
 /** MODAL =====================
@@ -223,3 +227,7 @@ div.message-list {
 }
 
 /* /modal */
+
+/* Transition animations */
+
+/* /Transition animations */
