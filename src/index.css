@@ -230,4 +230,32 @@ div.message-list {
 
 /* Transition animations */
 
-/* /Transition animations */
+/* For every chat message */
+.chat-message-enter {
+  opacity: 0.01;
+}
+  
+.chat-message-enter.chat-message-enter-active {
+  opacity: 1;
+  transition: opacity 100ms ease-in;
+}
+
+/* for all pages page-ui */
+.page-ui-enter {
+  opacity: 0.01;
+}
+  
+.page-ui-enter.page-ui-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+  
+.page-ui-leave {
+  opacity: 1;
+}
+  
+.page-ui-leave.page-ui-leave-active {
+  opacity: 0.01;
+  transition: opacity 3000ms ease-in;
+}
+  /* /Transition animations */

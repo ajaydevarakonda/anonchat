@@ -6,7 +6,8 @@ import Chat from './Chat';
 
 class App extends React.Component {
   render() {
-    return (<Router>
+    return (
+    <Router>
       <Switch>
         <Route exact path="/" render={(routeProps) => (
           <Join {...routeProps}/>
@@ -15,7 +16,8 @@ class App extends React.Component {
           <Chat {...routeProps}/>
         )} />
       </Switch>
-    </Router>)
+    </Router>
+    )
   }
 }
 

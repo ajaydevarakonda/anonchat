@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import store from './store';
+import { CSSTransitionGroup } from 'react-transition-group' // ES6
 
+import store from './store';
 import Message from './Message';
 import SystemMessage from './SystemMessage';
 
@@ -152,6 +153,7 @@ class Chat extends Component {
             </div>
             <br />
             <br />
+
             <div className="people">
               <h3 className="channel-literal">PEOPLE</h3>
               <br />
@@ -169,12 +171,16 @@ class Chat extends Component {
           <div className="main-div">
             <div className="message-container">
               <div className="message-list">
+                <CSSTransitionGroup
+                  transitionName="chat-message"
+                  transitionEnterTimeout={100}>
                 {this.state.messages
                     ? this.state.messages.map((msg, indx) =>
                         msg.username 
                             ? (<Message key={indx} {...msg} />) 
                             : (<SystemMessage key={indx} {...msg} />))
                     : null}
+                </CSSTransitionGroup>
               </div>
             </div>
             <div className="chat-bar">
