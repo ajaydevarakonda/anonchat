@@ -1,5 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import parse from 'html-react-parser';
+
 
 function Message(props) {
     return (
@@ -14,7 +16,7 @@ function Message(props) {
                 <span className="sender-username">{props.username}</span>{" "}
                 <span className="muted">{new Date(props.timestamp).toLocaleString()}</span>
                 <p className="message-body">
-                    {props.message}
+                    {parse(props.message)}
                 </p>
             </div>
         </div>

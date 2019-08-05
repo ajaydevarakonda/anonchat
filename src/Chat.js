@@ -15,6 +15,7 @@ class Chat extends Component {
 
     this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
     this.pushSystemMessageIntoList = this.pushSystemMessageIntoList.bind(this);
+    this.scrollToEndOfMessages = this.scrollToEndOfMessages.bind(this);
     this.updateUsersList = this.updateUsersList.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.copyRoomName = this.copyRoomName.bind(this);
@@ -74,16 +75,37 @@ class Chat extends Component {
     );
   }
 
+  scrollToEndOfMessages() {
+    const messageListDiv = document.querySelector(".message-list");
+    messageListDiv.scrollTop = messageListDiv.scrollHeight;
+  }
+
   pushMessageIntoList(msg) {
     var msg_parsed = JSON.parse(msg);
-    if (!msg_parsed.timestamp) msg_parsed.timestamp = new Date().toString();
-    this.setState(
-      { messages: this.state.messages.concat(msg_parsed) },
-      function() {
-        const messageListDiv = document.querySelector(".message-list");
-        messageListDiv.scrollTop = messageListDiv.scrollHeight;
-      }
-    );
+    const messagesLength = this.state.messages.length;
+    const lastMessage = this.state.messages[messagesLength - 1];
+
+    // TODO: Clear out any malicious content from the msg_parsed here.
+    if (!msg_parsed.timestamp)
+      msg_parsed.timestamp = new Date().toString();
+
+    if (
+      messagesLength &&
+      msg_parsed.username &&
+      lastMessage.username === msg_parsed.username
+    ) {
+      lastMessage.message += `<br/>${msg_parsed.message}`;
+      this.setState(
+        { messages: this.state.messages.slice(0, messagesLength - 1).concat(lastMessage) },
+        this.scrollToEndOfMessages
+      );
+    }
+    else {
+      this.setState(
+        { messages: this.state.messages.concat(msg_parsed) },
+        this.scrollToEndOfMessages
+      );
+    }
   }
 
   sendMessage(e) {
