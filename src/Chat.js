@@ -11,7 +11,8 @@ class Chat extends Component {
     super(props);
 
     this.state = {
-      messages: []
+      messages: [],
+      isModalOpen: false,
     };
 
     this.pushMessageIntoList = this.pushMessageIntoList.bind(this);
@@ -35,20 +36,6 @@ class Chat extends Component {
     const modal = document.getElementById("hash-share-modal");
     const btn = document.getElementById("myBtn");
     const span = document.getElementsByClassName("close")[0];
-
-    btn.onclick = function() {
-      modal.style.display = "block";
-    };
-
-    span.onclick = function() {
-      modal.style.display = "none";
-    };
-
-    window.onclick = function(event) {
-      if (event.target === modal) {
-        modal.style.display = "none";
-      }
-    };
   }
 
   updateUsersList(userlist) {
@@ -147,7 +134,7 @@ class Chat extends Component {
                 ...
               </span>
               <br />
-              <a id="myBtn" className="special">
+              <a id="myBtn" onClick={() => (this.setState({ isModalOpen: true }))} className="special">
                 Invite a user
               </a>
             </div>
@@ -172,7 +159,7 @@ class Chat extends Component {
             <div className="message-container">
               <div className="message-list">
                 <CSSTransitionGroup
-                  transitionName="chat-message"
+                  transitionName="react-fadein"
                   transitionEnterTimeout={100}>
                 {this.state.messages
                     ? this.state.messages.map((msg, indx) =>
@@ -202,9 +189,9 @@ class Chat extends Component {
         </div>
 
         {/* ============ Modal =============*/}
-        <div id="hash-share-modal" className="modal">
+        <div id="hash-share-modal" className={"modal" + (this.state.isModalOpen ? " modal-active" : "") }>
           <div className="modal-content">
-            <span className="close">&times;</span>
+            <span className="close" onClick={() => (this.setState({ isModalOpen: false }))}>&times;</span>
 
             <p>
               Note: Share the below hash to any user and ask them to input at

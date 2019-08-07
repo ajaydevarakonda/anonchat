@@ -185,6 +185,10 @@ div.message-list {
   background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
 }
 
+.modal-active {
+  display: block;
+}
+
 /* Modal Content */
 .modal-content {
   background-color: #fefefe;
@@ -226,27 +230,22 @@ div.message-list {
   margin: 1px 5px;
 }
 
-/* /modal */
-
 /* Transition animations */
-
-/* For every chat message */
-.chat-message-enter {
+/* React's fadein */
+.react-fadein-enter {
   opacity: 0.01;
 }
   
-.chat-message-enter.chat-message-enter-active {
+.react-fadein-enter.react-fadein-enter-active {
   opacity: 1;
-  transition: opacity 100ms ease-in;
+  transition: opacity 300ms ease-in;
 }
 
-/* for all pages page-ui */
-/* /Transition animations */
-
+/* CSS based fade in */
 .fadein-right {
-  -moz-animation: fadein 1000ms; /* Firefox */
-  -webkit-animation: fadein 1000ms; /* Safari and Chrome */
-  -o-animation: fadein 1000ms; /* Opera */
+  -moz-animation: fadein 300ms; /* Firefox */
+  -webkit-animation: fadein 300ms; /* Safari and Chrome */
+  -o-animation: fadein 300ms; /* Opera */
 }
 
 @keyframes fadein {
