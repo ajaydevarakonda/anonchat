@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { CSSTransitionGroup } from 'react-transition-group' // ES6
+import { Beforeunload } from 'react-beforeunload';
 
 import store from './store';
 import Message from './Message';
@@ -124,6 +125,7 @@ class Chat extends Component {
   render() {
     return (
       <div className="fadein-right">
+        <Beforeunload onBeforeunload={event => event.preventDefault()} />
         <div className="chat-page-container">
           <div className="left-div">
             <div>
