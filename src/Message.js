@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import parse from 'html-react-parser';
-import './message.css'
 
 function Message(props) {
     return (
