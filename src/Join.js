@@ -58,7 +58,7 @@ class Join extends Component {
 
     render() {
         return (
-            <div>
+            <div className="fadein-right">
                 <div className="join-page-container">
                     <h1>ANONCHAT.</h1>
                     <div>

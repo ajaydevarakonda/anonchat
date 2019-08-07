@@ -136,7 +136,7 @@ class Chat extends Component {
 
   render() {
     return (
-      <div>
+      <div className="fadein-right">
         <div className="chat-page-container">
           <div className="left-div">
             <div>

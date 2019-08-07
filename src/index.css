@@ -241,21 +241,45 @@ div.message-list {
 }
 
 /* for all pages page-ui */
-.page-ui-enter {
-  opacity: 0.01;
+/* /Transition animations */
+
+.fadein-right {
+  -moz-animation: fadein 1000ms; /* Firefox */
+  -webkit-animation: fadein 1000ms; /* Safari and Chrome */
+  -o-animation: fadein 1000ms; /* Opera */
 }
-  
-.page-ui-enter.page-ui-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
+
+@keyframes fadein {
+  from {
+      opacity:0;
+      transform: translateX(20px);
+  }
+  to {
+      opacity:1;
+      transform: translateX(0);
+  }
 }
-  
-.page-ui-leave {
-  opacity: 1;
+@-moz-keyframes fadein { /* Firefox */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
 }
-  
-.page-ui-leave.page-ui-leave-active {
-  opacity: 0.01;
-  transition: opacity 3000ms ease-in;
+@-webkit-keyframes fadein { /* Safari and Chrome */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
 }
-  /* /Transition animations */
+@-o-keyframes fadein { /* Opera */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity: 1;
+  }
+}
