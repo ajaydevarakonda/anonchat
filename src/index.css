@@ -92,6 +92,15 @@ span.person {
   line-height: 27px;
 }
 
+span.person.active {
+  background: #ffc200;
+  padding: 2px 4px;
+  border-radius: 1.5% 0 0 1.5%;
+  display: block;
+  margin-left: 1px;
+  color: #304b76;
+}
+
 div.people-list {
   overflow-x: hidden;
   overflow-y: auto;

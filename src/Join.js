@@ -48,7 +48,7 @@ class Join extends Component {
             this.props.socket.on('join-ack', function (msg) {
                 const { room, username, users, numberOfUsers } = JSON.parse(msg);
                 store.dispatch({ type: 'SET_ROOM_DETAILS', data: {
-                    room, username, currentRoomUsers: users.concat("always-here-to-test"), numberOfUsersInCurrentRoom: numberOfUsers
+                    room, username, currentRoomUsers: users, numberOfUsersInCurrentRoom: numberOfUsers
                 } });
                 window.location.hash = "/chat"
             });

@@ -240,7 +240,7 @@ class Chat extends Component {
               <div className="people-list">
                 {this.props.currentRoomUsers
                   ? this.props.currentRoomUsers.map((user, indx) => (
-                      <span key={indx} className="person">
+                      <span key={indx} className={"person" + (user === this.props.username ? " active" : "")}>
                         {user}
                       </span>
                     ))
