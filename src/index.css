@@ -236,6 +236,7 @@ div.message-list {
 
 /* CSS based fade in */
 .fadein-right {
+  animation: fadein 300ms;
   -moz-animation: fadein 300ms; /* Firefox */
   -webkit-animation: fadein 300ms; /* Safari and Chrome */
   -o-animation: fadein 300ms; /* Opera */

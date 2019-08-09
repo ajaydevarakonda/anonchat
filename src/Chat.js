@@ -36,6 +36,8 @@ class Chat extends Component {
   }
 
   componentDidMount() {
+    Notification.requestPermission();
+
     this.props.socket.on("user-message", this.pushMessageIntoList);
     this.props.socket.on("system-message", this.pushSystemMessageIntoList);
     this.props.socket.on("user-list-update", this.updateUsersList);
@@ -83,6 +85,13 @@ class Chat extends Component {
     // TODO: Clear out any malicious content from the msg_parsed here.
     if (!msg_parsed.timestamp)
       msg_parsed.timestamp = new Date().toString();
+
+    // show user a notification if his name is mentioned
+    if (Notification.permission && new RegExp(this.props.username).test(msg_parsed.message)) {
+      new Notification(`${msg_parsed.username} has mentioned you in chat!`);
+      const beeper = document.querySelector("#beeper");
+      if (beeper) { beeper.play(); }
+    }
 
     if (
       messagesLength &&
@@ -132,7 +141,11 @@ class Chat extends Component {
     this.setState({ message: e.target.value }, () => {
       if (this.state.showUsernameSuggestions) {
         const regexp = `${this.state.message.split("@")[1]}.*`;
-        const matchedUsernames = this.props.currentRoomUsers.filter(uname => new RegExp(regexp).test(uname));
+        const matchedUsernames = this.props.currentRoomUsers.filter(
+          uname =>
+            new RegExp(regexp, "i").test(uname) &&
+            uname !== this.props.username
+        );
 
         matchedUsernames && matchedUsernames.length
           ? this.setState({ usernameSuggestions: matchedUsernames, selectedUsernameSuggestion: 0 })
@@ -259,18 +272,10 @@ class Chat extends Component {
               this.state.usernameSuggestions.length ? (
                 <div className="username-suggestions">
                   {this.state.usernameSuggestions.map(
-                    (suggestion, indx) => (
-                      <div
-                        className={
-                          "suggested-username" +
-                          " " +
-                          (indx === this.state.selectedUsernameSuggestion ? "active" : "")
-                        }
-                        key={indx}
-                      >
+                    (suggestion, indx) => 
+                      (<div className={ "suggested-username" + " " + (indx === this.state.selectedUsernameSuggestion ? "active" : "") } key={indx}>
                         @{suggestion}
-                      </div>
-                    )
+                      </div>)
                   )}
                 </div>
               ) : null}
