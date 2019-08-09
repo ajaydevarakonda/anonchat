@@ -13,6 +13,10 @@ class Chat extends Component {
 
     this.state = {
       messages: [],
+      message: "",
+      usernameSuggestions: [],
+      showUsernameSuggestions: false,
+      selectedUsernameSuggestion: -1,
       isModalOpen: false,
     };
 
@@ -20,8 +24,10 @@ class Chat extends Component {
     this.pushSystemMessageIntoList = this.pushSystemMessageIntoList.bind(this);
     this.scrollToEndOfMessages = this.scrollToEndOfMessages.bind(this);
     this.updateUsersList = this.updateUsersList.bind(this);
+    this.onMessageChange = this.onMessageChange.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
     this.copyRoomName = this.copyRoomName.bind(this);
+    this.onMessageKeyDown = this.onMessageKeyDown.bind(this);
   }
 
   componentWillMount() {
@@ -122,6 +128,74 @@ class Chat extends Component {
     console.log("Copied!");
   }
 
+  onMessageChange(e) {
+    this.setState({ message: e.target.value }, () => {
+      if (this.state.showUsernameSuggestions) {
+        const regexp = `${this.state.message.split("@")[1]}.*`;
+        const matchedUsernames = this.props.currentRoomUsers.filter(uname => new RegExp(regexp).test(uname));
+
+        matchedUsernames && matchedUsernames.length
+          ? this.setState({ usernameSuggestions: matchedUsernames, selectedUsernameSuggestion: 0 })
+          : this.setState({ showUsernameSuggestions: false }); // back to normal.
+      }
+    });
+  }
+
+  onMessageKeyDown(e) {
+    console.log(e.keyCode)
+    // @ is pressed
+    if (e.keyCode === 50 && e.shiftKey) {
+      this.setState({ showUsernameSuggestions: true }, this.showUsernameSuggestions);
+    }
+    // when usernames suggestions are being shown and TAB or ENTER is pressed.
+    else if (this.state.showUsernameSuggestions && (e.keyCode === 9 || e.keyCode === 13)) {
+      e.preventDefault();
+      this.setState({
+        message:
+          this.state.message.split("@")[0] +
+          "@" +
+          this.state.usernameSuggestions[
+            this.state.selectedUsernameSuggestion
+          ],
+        showUsernameSuggestions: false,
+      });
+    }
+    // when usernames suggestions are being shown and UP arrow key is pressed.
+    else if (this.state.showUsernameSuggestions && e.keyCode === 38) {
+      e.preventDefault();
+      if (this.state.selectedUsernameSuggestion <= 0) {
+        return;
+      }
+      else {
+        this.setState({
+          selectedUsernameSuggestion:
+            this.state.selectedUsernameSuggestion - 1
+        });
+      }
+    }
+    // when usernames suggestions are being shown and DOWN arrow key is pressed.
+    else if (this.state.showUsernameSuggestions && e.keyCode === 40) {
+      e.preventDefault();
+      if (
+        this.state.selectedUsernameSuggestion >=
+        this.state.usernameSuggestions.length - 1
+      )
+      {
+        return;
+      }
+      else {
+        this.setState({
+          selectedUsernameSuggestion:
+            this.state.selectedUsernameSuggestion + 1
+        });
+      }
+    }
+    // space is pressed
+    else if (e.keyCode === 32) {
+      this.setState({ showUsernameSuggestions: false });
+    }
+  }
+
   render() {
     return (
       <div className="fadein-right">
@@ -136,7 +210,11 @@ class Chat extends Component {
                 ...
               </span>
               <br />
-              <a id="myBtn" onClick={() => (this.setState({ isModalOpen: true }))} className="special">
+              <a
+                id="myBtn"
+                onClick={() => this.setState({ isModalOpen: true })}
+                className="special"
+              >
                 Invite a user
               </a>
             </div>
@@ -162,20 +240,40 @@ class Chat extends Component {
               <div className="message-list">
                 <CSSTransitionGroup
                   transitionName="react-fadein"
-                  transitionEnterTimeout={100}>
-                {this.state.messages
+                  transitionEnterTimeout={100}
+                >
+                  {this.state.messages
                     ? this.state.messages.map((msg, indx) =>
-                        msg.username 
-                            ? (<Message key={indx} {...msg} />) 
-                            : (<SystemMessage key={indx} {...msg} />))
+                        msg.username ? (
+                          <Message key={indx} {...msg} />
+                        ) : (
+                          <SystemMessage key={indx} {...msg} />
+                        )
+                      )
                     : null}
                 </CSSTransitionGroup>
               </div>
             </div>
             <div className="chat-bar">
-              <div className="username">
-                <span>{this.props.username}</span>
-              </div>
+              {this.state.showUsernameSuggestions &&
+              this.state.usernameSuggestions.length ? (
+                <div className="username-suggestions">
+                  {this.state.usernameSuggestions.map(
+                    (suggestion, indx) => (
+                      <div
+                        className={
+                          "suggested-username" +
+                          " " +
+                          (indx === this.state.selectedUsernameSuggestion ? "active" : "")
+                        }
+                        key={indx}
+                      >
+                        @{suggestion}
+                      </div>
+                    )
+                  )}
+                </div>
+              ) : null}
               <div className="message-input">
                 <form onSubmit={this.sendMessage}>
                   <input
@@ -183,6 +281,9 @@ class Chat extends Component {
                     id="msg"
                     placeholder="Enter message and press enter..."
                     autoComplete="off"
+                    onChange={this.onMessageChange}
+                    onKeyDown={this.onMessageKeyDown}
+                    value={this.state.message}
                   />
                 </form>
               </div>
@@ -191,13 +292,23 @@ class Chat extends Component {
         </div>
 
         {/* ============ Modal =============*/}
-        <div id="hash-share-modal" className={"modal" + (this.state.isModalOpen ? " modal-active" : "") }>
+        <div
+          id="hash-share-modal"
+          className={
+            "modal" + (this.state.isModalOpen ? " modal-active" : "")
+          }
+        >
           <div className="modal-content">
-            <span className="close" onClick={() => (this.setState({ isModalOpen: false }))}>&times;</span>
+            <span
+              className="close"
+              onClick={() => this.setState({ isModalOpen: false })}
+            >
+              &times;
+            </span>
 
             <p>
-              Note: Share the below hash to any user and ask them to input at
-              home page
+              Note: Share the below hash to any user and ask them to input
+              at home page
             </p>
             <input
               type="text"
