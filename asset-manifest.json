@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/anonchat/static/css/main.81baa2f4.chunk.css",
-    "main.js": "/anonchat/static/js/main.37ffc351.chunk.js",
-    "main.js.map": "/anonchat/static/js/main.37ffc351.chunk.js.map",
+    "main.js": "/anonchat/static/js/main.5c590509.chunk.js",
+    "main.js.map": "/anonchat/static/js/main.5c590509.chunk.js.map",
     "runtime~main.js": "/anonchat/static/js/runtime~main.303eabcb.js",
     "runtime~main.js.map": "/anonchat/static/js/runtime~main.303eabcb.js.map",
     "static/js/2.01b935ce.chunk.js": "/anonchat/static/js/2.01b935ce.chunk.js",
     "static/js/2.01b935ce.chunk.js.map": "/anonchat/static/js/2.01b935ce.chunk.js.map",
     "index.html": "/anonchat/index.html",
-    "precache-manifest.e6178238d2b879fa8521ce70f9d2ee1b.js": "/anonchat/precache-manifest.e6178238d2b879fa8521ce70f9d2ee1b.js",
+    "precache-manifest.d058383787aa3adebd5d73c423b4c6f3.js": "/anonchat/precache-manifest.d058383787aa3adebd5d73c423b4c6f3.js",
     "service-worker.js": "/anonchat/service-worker.js",
     "static/css/main.81baa2f4.chunk.css.map": "/anonchat/static/css/main.81baa2f4.chunk.css.map"
   }
