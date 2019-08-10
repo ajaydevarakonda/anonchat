@@ -2,7 +2,7 @@
   "name": "anonchat-frontend",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://ajaydevarakonda.dev/anonchat-frontend",
+  "homepage": "https://ajaydevarakonda.dev/anonchat",
   "dependencies": {
     "axios": "^0.19.0",
     "html-react-parser": "^0.9.1",
