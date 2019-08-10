@@ -2,8 +2,8 @@ import { createStore } from 'redux';
 import openSocket from 'socket.io-client';
 
 const initialState = {
-    // socket: openSocket("https://anonchat-backend.herokuapp.com/"),
-    socket: openSocket("http://localhost:3300"),
+    socket: openSocket("https://anonchat-backend.herokuapp.com/"),
+    // socket: openSocket("http://localhost:3300"),
     username: "",
     room: "",
     currentRoomUsers: [],
