@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "5610623c6f3254a533863559a5ad8d6d",
+    "revision": "9a6328609ba546769fec0dfb41ea5a13",
     "url": "/anonchat/index.html"
   },
   {
-    "revision": "9a5c8a4d5ab8bf114616",
+    "revision": "4f0a022823bd6778ca68",
     "url": "/anonchat/static/css/main.81baa2f4.chunk.css"
   },
   {
@@ -12,8 +12,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/anonchat/static/js/2.01b935ce.chunk.js"
   },
   {
-    "revision": "9a5c8a4d5ab8bf114616",
-    "url": "/anonchat/static/js/main.5c590509.chunk.js"
+    "revision": "4f0a022823bd6778ca68",
+    "url": "/anonchat/static/js/main.2d20f734.chunk.js"
   },
   {
     "revision": "5a0600dac53d0b7bb136",

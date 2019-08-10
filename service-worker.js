@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/anonchat/precache-manifest.d058383787aa3adebd5d73c423b4c6f3.js"
+  "/anonchat/precache-manifest.24af94f9e31ee57e804467c84dd4f1f1.js"
 );
 
 self.addEventListener('message', (event) => {
