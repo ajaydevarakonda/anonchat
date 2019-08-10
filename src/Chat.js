@@ -87,7 +87,7 @@ class Chat extends Component {
       msg_parsed.timestamp = new Date().toString();
 
     // show user a notification if his name is mentioned
-    if (Notification.permission && new RegExp(this.props.username).test(msg_parsed.message)) {
+    if (Notification.permission && new RegExp(`\@${this.props.username}`).test(msg_parsed.message)) {
       new Notification(`${msg_parsed.username} has mentioned you in chat!`);
       const beeper = document.querySelector("#beeper");
       if (beeper) { beeper.play(); }
@@ -114,8 +114,7 @@ class Chat extends Component {
 
   sendMessage(e) {
     e.preventDefault();
-    const messageDiv = document.querySelector("#msg");
-    const message = messageDiv.value;
+    const message = this.state.message;
     if (!message || !message.length) return false;
     this.props.socket.emit(
       "user-message",
@@ -124,7 +123,7 @@ class Chat extends Component {
         room: this.props.room
       })
     );
-    messageDiv.value = "";
+    this.setState({ message: "" });
   }
 
   copyRoomName() {
@@ -155,7 +154,6 @@ class Chat extends Component {
   }
 
   onMessageKeyDown(e) {
-    console.log(e.keyCode)
     // @ is pressed
     if (e.keyCode === 50 && e.shiftKey) {
       this.setState({ showUsernameSuggestions: true }, this.showUsernameSuggestions);
