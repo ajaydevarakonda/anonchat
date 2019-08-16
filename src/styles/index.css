@@ -1,0 +1,106 @@
+:root {
+  --black-color: #222;
+  --blue-color: #304b76;
+  --dark-blue-color: #2f3761;
+  --white-color: #fff;
+  --yellow-color: #ffc200;
+  --grey-color: #a6a5a1;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: 'Open Sans', sans-serif;
+  background: var(--blue-color);
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+}
+
+#root {
+  height: 100%;
+}
+
+button {
+  cursor: pointer;
+  padding: 10px 30px;
+  font-size: 20px;
+  border-radius: 25px;
+  width: 100%;
+  outline: none;
+  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.4);
+  transition: all .3s ease-in-out;
+}
+
+button:hover {
+  box-shadow: 0 4px 7px 0 rgba(0, 0, 0, 0.5);
+}
+
+input {
+  caret-color: var(--yellow-color);
+  outline: none;
+  padding: 10px 20px;
+}
+
+.muted {
+  color: var(--grey-color);
+  font-style: italic;
+  font-size: 10px;
+  margin: -4px 0 0;
+}
+
+/* Transition animations */
+/* React's fadein */
+.react-fadein-enter {
+  opacity: 0.01;
+}
+  
+.react-fadein-enter.react-fadein-enter-active {
+  opacity: 1;
+  transition: opacity 300ms ease-in;
+}
+
+/* CSS based fade in */
+.fadein-right {
+  animation: fadein 300ms;
+  -moz-animation: fadein 300ms; /* Firefox */
+  -webkit-animation: fadein 300ms; /* Safari and Chrome */
+  -o-animation: fadein 300ms; /* Opera */
+}
+
+@keyframes fadein {
+  from {
+      opacity:0;
+      transform: translateX(20px);
+  }
+  to {
+      opacity:1;
+      transform: translateX(0);
+  }
+}
+@-moz-keyframes fadein { /* Firefox */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
+}
+@-webkit-keyframes fadein { /* Safari and Chrome */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity:1;
+  }
+}
+@-o-keyframes fadein { /* Opera */
+  from {
+      opacity:0;
+  }
+  to {
+      opacity: 1;
+  }
+}
