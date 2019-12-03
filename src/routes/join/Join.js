@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { connect } from 'react-redux';
-import store from './store';
+import store from '../../store';
+import './Join.css';
 
 function randomHash(length) {
     var result = '';
@@ -12,7 +13,7 @@ function randomHash(length) {
     return result;
 }
 
-class Join extends Component {
+class JoinComponent extends Component {
     constructor(props) {
         super(props);
 
@@ -58,19 +59,17 @@ class Join extends Component {
 
     render() {
         return (
-            <div className="fadein-right">
-                <div className="join-page-container">
-                    <h1>ANONCHAT.</h1>
-                    <div>
-                        <div>
-                            <input type="text" className="join-input" placeholder="room hash..." id="hash" />
-                            <button onClick={this.joinRoom} className="join-btn">JOIN</button>
-                        </div>
-                        <br />
-                        or{" "}
-                        <a onClick={this.joinRandomRoom} className="special create-chat">
-                            create chat
-                        </a>
+            <div className="joinWrapper">
+                <h1 className="logo">ANONCHAT</h1>
+                <div className="fadein-right formContainer">
+                    <div className="inputWrapper">
+                        <input type="text" className="join-input" placeholder="Please enter room id" id="hash" />
+                    </div>
+                    <div className="buttonsWrapper">
+                        <button onClick={this.joinRoom} className="join-chat">join</button>
+                        <button onClick={this.joinRandomRoom} className="create-chat">
+                            create
+                        </button>
                     </div>
                 </div>
             </div>
@@ -82,4 +81,4 @@ const mapStateToProps = (state /*, ownProps*/) => {
     return { ...state };
 };
 
-export default connect(mapStateToProps)(Join);
+export const Join = connect(mapStateToProps)(JoinComponent);

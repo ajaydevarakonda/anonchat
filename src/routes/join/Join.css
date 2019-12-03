@@ -1,0 +1,84 @@
+.joinWrapper {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: url('../../assets/chatBackground.jpg'), linear-gradient(to top right,var(--blue-color) 0%, var(--yellow-color) 100%);
+    background-blend-mode: multiply;
+    background-size: cover;
+}
+
+.joinWrapper .logo {
+    color: var(--white-color);
+    font-weight: bold;
+    margin-top: 0;
+}
+
+.joinWrapper .formContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+.joinWrapper .formContainer .inputWrapper {
+    padding: 20px 10px;
+}
+
+.join-input {
+    font-size: 23px;
+    padding: 10px 25px;
+    width: 300px;
+    background: rgba(34, 34, 34, .8);
+    border: 1px solid var(--black-color);
+    border-radius: 25px;
+    color: var(--white-color);
+    cursor:pointer;
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.4);
+    transition: all .3s ease-in-out;
+}
+
+.join-input:hover, .join-input:active, .join-input:focus {
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.75);
+}
+
+.join-input::placeholder {
+    color: rgba(255, 255, 255, .5);
+}
+
+.joinWrapper .formContainer .buttonsWrapper {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-around;
+    color: var(--black-color);
+    text-transform: uppercase;
+    width: 370px;
+}
+
+.buttonsWrapper button {
+    box-shadow: 0 5px 5px 0 rgba(0, 0, 0, 0.4);
+    transition: all .3s ease-in-out;
+    text-transform: uppercase;
+    flex-basis: 40%;
+    margin: 10px;
+}
+
+.join-chat {
+    border: 1px solid rgba(255, 194, 9, .6);
+    background-color: rgba(255, 194, 9, .6);
+}
+
+.join-chat:hover {
+    border: 1px solid rgba(255, 194, 9, 1);
+    background-color: rgba(255, 194, 9, 1);
+}
+
+.create-chat {
+    background-color: rgba(255, 255, 255, .7);
+    border: 1px solid rgba(255, 255, 255, .7);
+}
+.create-chat:hover {
+    background-color: rgba(255, 255, 255, 1);
+    border: 1px solid rgba(255, 255, 255, 1);
+}

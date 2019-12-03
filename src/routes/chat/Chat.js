@@ -2,12 +2,15 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { CSSTransitionGroup } from 'react-transition-group' // ES6
 import { Beforeunload } from 'react-beforeunload';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
-import store from './store';
-import Message from './Message';
-import SystemMessage from './SystemMessage';
+import store from '../../store';
+import { Message } from '../../components/Message';
+import { SystemMessage } from '../../components/SystemMessage';
+import { Modal } from '../../components/Modal';
+import './Chat.css';
 
-class Chat extends Component {
+class ChatComponent extends Component {
   constructor(props) {
     super(props);
 
@@ -26,7 +29,6 @@ class Chat extends Component {
     this.updateUsersList = this.updateUsersList.bind(this);
     this.onMessageChange = this.onMessageChange.bind(this);
     this.sendMessage = this.sendMessage.bind(this);
-    this.copyRoomName = this.copyRoomName.bind(this);
     this.onMessageKeyDown = this.onMessageKeyDown.bind(this);
   }
 
@@ -66,14 +68,14 @@ class Chat extends Component {
         })
       },
       function() {
-        const messageListDiv = document.querySelector(".message-list");
+        const messageListDiv = document.querySelector(".messageContainer");
         messageListDiv.scrollTop = messageListDiv.scrollHeight;
       }
     );
   }
 
   scrollToEndOfMessages() {
-    const messageListDiv = document.querySelector(".message-list");
+    const messageListDiv = document.querySelector(".messageContainer");
     messageListDiv.scrollTop = messageListDiv.scrollHeight;
   }
 
@@ -124,16 +126,6 @@ class Chat extends Component {
       })
     );
     this.setState({ message: "" });
-  }
-
-  copyRoomName() {
-    const roomHashDiv = document.querySelector("#share-room-hash");
-    if (!roomHashDiv) return false;
-    const roomName = this.props.room;
-    if (!roomName) return false;
-    roomHashDiv.select();
-    document.execCommand("copy", true);
-    console.log("Copied!");
   }
 
   onMessageChange(e) {
@@ -208,121 +200,101 @@ class Chat extends Component {
   }
 
   render() {
+    const { messages, showUsernameSuggestions, usernameSuggestions, isModalOpen, selectedUsernameSuggestion } = this.state;
+    const { room, currentRoomUsers, username } = this.props;
     return (
-      <div className="fadein-right">
+      <div className="fadein-right chatWrapper">
         <Beforeunload onBeforeunload={event => event.preventDefault()} />
-        <div className="chat-page-container">
-          <div className="left-div">
-            <div>
-              <h3 className="channel-literal">CHANNEL</h3>
-              <br />
-              <span className="channel-name selected">
-                #{this.props.room ? this.props.room.slice(0, 8) : null}
-                ...
-              </span>
-              <br />
-              <a
-                id="myBtn"
-                onClick={() => this.setState({ isModalOpen: true })}
-                className="special"
-              >
-                Invite a user
-              </a>
-            </div>
-            <br />
-            <br />
+        <div className="sidebar">
+          <div className="ribbonWrapper">
+            <div className="ribbon">room information</div>
+          </div>
+          <div className="buttonWrapper">
+            <button
+              onClick={() => this.setState({ isModalOpen: true })}
+              className="create-chat"
+            >
+              Invite a user
+            </button>
+          </div>
 
-            <div className="people">
-              <h3 className="channel-literal">PEOPLE</h3>
-              <br />
-              <div className="people-list">
-                {this.props.currentRoomUsers
-                  ? this.props.currentRoomUsers.map((user, indx) => (
-                      <span key={indx} className={"person" + (user === this.props.username ? " active" : "")}>
-                        {user}
-                      </span>
-                    ))
-                  : null}
-              </div>
+          <div className="peopleListWrapper">
+            <div className="ribbonWrapper">
+              <div className="ribbon">people</div>
+            </div>
+            
+            <div className="peopleList">
+              {currentRoomUsers ? currentRoomUsers.map((user, indx) => (
+                <div key={indx} className={`person ${user === username ? " active" : ""}`}>
+                  {user}
+                </div>
+                  ))
+                : null}
             </div>
           </div>
-          <div className="main-div">
-            <div className="message-container">
-              <div className="message-list">
-                <CSSTransitionGroup
-                  transitionName="react-fadein"
-                  transitionEnterTimeout={100}
-                >
-                  {this.state.messages
-                    ? this.state.messages.map((msg, indx) =>
-                        msg.username ? (
-                          <Message key={indx} {...msg} />
-                        ) : (
-                          <SystemMessage key={indx} {...msg} />
-                        )
-                      )
-                    : null}
-                </CSSTransitionGroup>
-              </div>
-            </div>
-            <div className="chat-bar">
-              {this.state.showUsernameSuggestions &&
-              this.state.usernameSuggestions.length ? (
+        </div>
+
+        <div className="communicatorContainer">
+          <div className="messageContainer">
+            {messages
+              ? messages.map((msg, i) => msg.username
+                ? <Message key={i} {...msg} />
+                : <SystemMessage key={i} {...msg} />
+              )
+              : null}
+          </div>
+
+          <div className="inputContainer">
+            <div>
+              {/*this thing is not working for some reason*/}
+              {showUsernameSuggestions &&
+              usernameSuggestions.length ? (
                 <div className="username-suggestions">
-                  {this.state.usernameSuggestions.map(
-                    (suggestion, indx) => 
-                      (<div className={ "suggested-username" + " " + (indx === this.state.selectedUsernameSuggestion ? "active" : "") } key={indx}>
+                  {usernameSuggestions.map(
+                    (suggestion, indx) =>
+                      (<div className={`suggested-username ${indx === selectedUsernameSuggestion ? "active" : ""}`} key={indx}>
                         @{suggestion}
                       </div>)
                   )}
                 </div>
               ) : null}
-              <div className="message-input">
-                <form onSubmit={this.sendMessage}>
-                  <input
-                    type="text"
-                    id="msg"
-                    placeholder="Enter message and press enter..."
-                    autoComplete="off"
-                    onChange={this.onMessageChange}
-                    onKeyDown={this.onMessageKeyDown}
-                    value={this.state.message}
-                  />
-                </form>
-              </div>
+            </div>
+
+            <div className="messageInputWrapper">
+              <form onSubmit={this.sendMessage}>
+                <input
+                  type="text"
+                  id="msg"
+                  placeholder="Enter message and press enter..."
+                  autoComplete="off"
+                  onChange={this.onMessageChange}
+                  onKeyDown={this.onMessageKeyDown}
+                  value={this.state.message}
+                />
+              </form>
             </div>
           </div>
         </div>
 
-        {/* ============ Modal =============*/}
-        <div
-          id="hash-share-modal"
-          className={
-            "modal" + (this.state.isModalOpen ? " modal-active" : "")
-          }
+        <Modal
+          isModalOpen={isModalOpen}
+          onClose={() => this.setState({ isModalOpen: false })}
+          header="Room hash"
         >
-          <div className="modal-content">
-            <span
-              className="close"
-              onClick={() => this.setState({ isModalOpen: false })}
-            >
-              &times;
-            </span>
-
-            <p>
-              Note: Share the below hash to any user and ask them to input
-              at home page
-            </p>
-            <input
-              type="text"
-              id="share-room-hash"
-              defaultValue={this.props.room}
-            />
-            <button id="copy-btn" onClick={this.copyRoomName}>
+          <CopyToClipboard text={room}>
+          <div className="roomHash">{room}</div>
+          </CopyToClipboard>
+          <CopyToClipboard text={room}>
+            <button className="copyButton">
               Copy
             </button>
-          </div>
-        </div>
+          </CopyToClipboard>
+
+          <p className="note">
+            Note: Share the below hash to any user and ask them to input
+            at home page
+          </p>
+        </Modal>
       </div>
     );
   }
@@ -332,4 +304,4 @@ const mapStateToProps = (state /*, ownProps*/) => {
     return { ...state };
 };
     
-export default connect(mapStateToProps)(Chat);
+export const Chat = connect(mapStateToProps)(ChatComponent);

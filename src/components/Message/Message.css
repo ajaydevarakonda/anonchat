@@ -1,0 +1,22 @@
+.messageWrapper {
+    display: flex;
+    padding: 10px 0;
+}
+
+.profilePic {
+    width: 30px;
+    height: 30px;
+}
+
+.userWrapper {
+    padding-bottom: 10px;
+}
+
+.username {
+    font-weight: bold;
+    margin-top: -4px;
+}
+
+.message {
+    padding-left: 10px;
+}
